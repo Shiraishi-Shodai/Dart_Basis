@@ -157,6 +157,72 @@ computeSum3({ @required int val1, int val2 = 0 }){
 - ブレース{}: 関数呼び出し時に任意引数の名前を指定する。順不同
 - ブラケット[]: 関数呼び出し時に任意引き数の名前を指定しない。引数が定義された順に値を代入
 
+## 5 例外処理
+
+コードを実行した時に発生するエラーに対処すること　　
+- データベースに接続できない
+- Web APIにアクセスできない
+- ファイルのI/Oエラー
+
+### 5-1 例外の詳細を確認する
+catchの第1引数eで例外の種類を取得し、catchの第2引数を指定することで例外の詳細を取得
+
+```
+try {
+  int a = 100 / 0;
+  print(a);
+} catch (e, str) {
+  print(e);
+  print(str);
+}
+```
+### 5-2 throw
+プログラムに例外が発生したことを知らせる。JavaではJVMに通知する
+
+### 5-3 on句
+例外処理をする例外ターゲットを指定(複数可能)
+※on句は上から順位にチェックしていくため指定するターゲットはサブクラスからスーパークラスの順に指定すると、具体的な例外の原因を特定しやすい
+
+```
+void main() {
+  try {
+    print('Try One');
+    throw FormatException();
+    print('Try Two');
+  } on FormatException {
+    print('On:FormatException');
+  } on Exception {
+    print('On:Exception');
+  } on Error {
+    print('On:Error');
+  } finally {
+    print('Finally');
+  }
+  print('After Finally');
+}
+```
+
+catchとの併用も可能
+
+```
+try {
+  print('Try One');
+  throw FormatException();
+} on FormatException catch(e, str) {
+  print('On: FormatException');
+  print(e);
+  print(str);
+}
+```
+
+[on句を使用しないcatchは良くないらしい](https://dart.dev/tools/linter-rules/avoid_catches_without_on_clauses)
+
+### rethrow
+例外の処理を呼び出し元に委ねたい場合に使用できる便利な機能。catch句の中で使用
+- rethrow は、catch ブロックでキャッチした例外を再スローします。
+- rethrow を使用すると、例外の処理を呼び出し元に委ねることができます。
+- rethrow を使用すると、例外がスタックトレースを保持したまま再スローされます。
+
 ## その他
 ### pubspec.yamlファイル
 
