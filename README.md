@@ -4,6 +4,33 @@
 * 大規模開発に向いている
 * 強力な型推論機能を持っている
 
+## 0 main関数
+
+```
+void main(List<String> arguments) {
+
+}
+```
+
+- アプリ実行時に最初に実行される関数
+- 引き数に任意のコマンドライン引数を持つ
+
+### コマンドライン引数の使用例
+```
+dart run --enable-asserts main.dart 1 test
+
+main(List<String> arguments) {
+  print(arguments);
+
+  assert(arguments.length == 2);
+  print("要素は2です");
+  assert(int.parse(arguments[0]) == 1);
+  print("0番目の要素は1です");
+  assert(arguments[1] == 'test');
+  print("0番目の要素はtestです");
+}
+
+```
 ## 1 型について
 
 ### 1-1 dynamic型
