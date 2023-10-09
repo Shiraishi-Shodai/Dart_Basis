@@ -86,6 +86,8 @@ main(List<String> arguments) {
 | Listの要素の変更 | 可能 | 不可能 |
 | 使用例 | ランダムな値を生成する<br>現在のデバイスの時間を取得する<br>外部APIから取得したデータ | 定数的な値 (例えば、π)<br>静的なリソース (例えば、アイコン、タイトル、項目名)<br>定数的な定数 (例えば、enum) |
 
+constには値はコンパイル値を代入する？
+[詳しく](https://qiita.com/uehaj/items/7c07f019e05a743d1022)
 ```
 void main() {
  String x = "check";
@@ -217,12 +219,106 @@ try {
 
 [on句を使用しないcatchは良くないらしい](https://dart.dev/tools/linter-rules/avoid_catches_without_on_clauses)
 
-### rethrow
+### 5-4 rethrow
 例外の処理を呼び出し元に委ねたい場合に使用できる便利な機能。catch句の中で使用
 - rethrow は、catch ブロックでキャッチした例外を再スローします。
 - rethrow を使用すると、例外の処理を呼び出し元に委ねることができます。
 - rethrow を使用すると、例外がスタックトレースを保持したまま再スローされます。
 
+## 6 クラス
+- NULLを許可しないインスタンス変数は定義時価かコンストラクタで初期化が必要
+- 全てのインスタンス変数は内部的にgetterとsetterを持っている
+- finalで宣言されたインスタンス変数はsetterを持たない
+- constはstaticとしてのみインスタンス変数として宣言でき、finalはコンストラクタ内か宣言時に初期化する必要がある
+- 内部的にクラスは空のコンストラクタを持っている
+- クラスのコンストラクタを明示的に定義していない場合、空のコンストラクタは自動的に適用される
+- コンストラクタを複数指定する場合はコンストラクタの名前が重複しないようにする
+```
+  Person.empty();
+  Person(this.name);
+```
+### 6-1 クラスの基本構成
+
+```
+class クラス名 {
+   //インスタンス変数
+   //コンストラクタ
+   //インスタンスメソッド
+}
+```
+
+### 6-2 継承
+子クラスのコンストラクタで親クラスのコンストラクタを呼び出す必要がある。
+
+#### 継承したインスタンス変数はコンストラクタ生成時にthis.変数名として使えない?下のコードではname変数を持つPersonを継承しているが、コンストラクタの引数ではthis.nameとして書くと、nameが存在しませんとエラーになる
+
+#### @overrideで親クラスのメソッドをオーバーライド
+```
+class Employee extends Person {
+  String department;
+
+  Employee(String name, this.department) : super(name) {
+    print(name);
+  }
+}
+```
+
+### 6-3 抽象クラス(継承されることを前提としたクラス)
+- 抽象クラスはインスタンス化が禁止されている
+- 抽象クラスを継承したクラスでは抽象クラスで定義した抽象メソッドをオーバーライドしなければいけない
+- 普通のメソッドは必ずしもオーバーライドする必要がない
+- 抽象メソッドは{}を書かない
+
+```
+abstract class Animal {
+  void walk()
+
+  void run() {
+    print('走るよー');
+  }
+}
+```
+
+### 6-4 暗黙的インターフェース
+- Dartにインターフェースというワードは存在しない
+- 全てのメソッドは抽象メソッドである
+- 基本的にフィールドを1つも持たない
+- implementで読み込んだクラスのインスタンス変数やメソッドを全て実装する必要がある
+
+
+### 6-5 Mixin
+- サブクラスを作らずにクラスを拡張する仕組み
+- onをつけることで特定のクラスを継承したクラスのみ拡張させることも出来る
+
+下の例ではPersonクラスを実装したクラスのみAccountingによる拡張を許可している
+```
+mixin Accounting on Person {
+  void fileTaxies() {
+    print("仕事やっておきました");
+  }
+}
+```
+[参考ページ](https://resocoder.com/2019/07/21/mixins-in-dart-understand-dart-flutter-fundamentals-tutorial/#t-1696831052868)
+
+### 6-6 static
+- クラスのプロパティ/メソッドをインスタンス化せずに使用できるようにしてくれるもの
+- 各インスタンスで共有したい情報に使うと便利
+- 呼び出すときはインスタンス変数名からではなく、クラス名から呼び出す
+  
+```
+class Person {
+  static const initialAge = 0;
+  static void printFeature() {
+    print('Hello Person');
+  }
+}
+
+void main() {
+  print(Person.initialAge); //〇
+  var p = Person();
+  print(p.initialAge); //✖
+}
+```
 ## その他
 ### pubspec.yamlファイル
 
