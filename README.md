@@ -319,6 +319,8 @@ void main() {
   print(p.initialAge); //✖
 }
 ```
+
+
 ## その他
 ### pubspec.yamlファイル
 
